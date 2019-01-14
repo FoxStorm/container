@@ -6,17 +6,17 @@ export class Services {
   readonly factories: ServiceFactory[] = []
   readonly providers: Provider[] = []
 
-  registerServiceWithInterface (service: Services, serviceInterface: any) {
+  registerWithInterface<S> (service: S, serviceInterface: any) {
     const factory = new ServiceFactory(service, [serviceInterface])
     this.registerFactoryWithInterface(factory)
   }
 
-  registerServiceWithInterfaces (service: Services, serviceInterface: any[]) {
+  registerWithInterfaces<S>  (service: S, serviceInterface: any[]) {
     const factory = new ServiceFactory(service, serviceInterface)
     this.registerFactoryWithInterface(factory)
   }
 
-  registerService (service: Services) {
+  register<S> (service: S) {
     const factory = new ServiceFactory(service, [])
     this.registerFactoryWithInterface(factory)
   }

@@ -1,7 +1,16 @@
 import { Services } from './Services'
 
-export interface Provider {
+interface WillBoot {
+  willBoot(container: any): Promise<void>
+}
+
+export interface Provider extends WillBoot {
   register(services: Services): void
-  willBoot(): Promise<void>
-  didBoot(): Promise<void>
+  didBoot(container: any): Promise<void>
+}
+
+export class BaseProvider implements WillBoot {
+  willBoot(container: any): Promise<void> {
+    return Promise.resolve()
+  }
 }
