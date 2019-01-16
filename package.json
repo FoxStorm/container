@@ -1,16 +1,23 @@
 {
   "name": "foxstorm-service",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "📦 Dependency injection / inversion of control framework.",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FoxStorm/container"
+  },
   "scripts": {
     "build": "tsc",
     "lint": "tslint --project ./ --exclude \"node_modules/*/**.ts\"",
     "test": "mocha --require ts-node/register src/tests/**/*"
   },
-  "keywords": [],
+  "keywords": [
+    "dependency injection",
+    "inversion of control"
+  ],
   "author": "Sebastian - Corneliu Vîrlan",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.5",
