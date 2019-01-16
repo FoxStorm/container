@@ -1,7 +1,7 @@
 import { Environment } from './Environment'
 import { Services } from './Services'
 import { ServiceFactory } from './ServiceFactory'
-import { ContainerError } from '../ContainerError'
+import { ContainerError } from './ContainerError'
 import { Config } from './Config'
 import { Service } from './Service'
 
