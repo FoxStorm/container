@@ -1,22 +1,23 @@
 import { ServiceFactory } from './ServiceFactory'
 import { ServiceDescriptionBuilder } from './ServiceDescriptionBuilder'
 import { Provider } from './Provider'
+import { ServiceType } from './ServiceType'
 
 export class Services {
   readonly factories: ServiceFactory[] = []
   readonly providers: Provider[] = []
 
-  registerWithInterface<S> (service: S, serviceInterface: any) {
+  registerWithInterface<S> (service: ServiceType<S>, serviceInterface: string) {
     const factory = new ServiceFactory(service, [serviceInterface])
     this.registerFactoryWithInterface(factory)
   }
 
-  registerWithInterfaces<S>  (service: S, serviceInterface: any[]) {
+  registerWithInterfaces<S> (service: ServiceType<S>, serviceInterface: string[]) {
     const factory = new ServiceFactory(service, serviceInterface)
     this.registerFactoryWithInterface(factory)
   }
 
-  register<S> (service: S) {
+  register<S> (service: ServiceType<S>) {
     const factory = new ServiceFactory(service, [])
     this.registerFactoryWithInterface(factory)
   }

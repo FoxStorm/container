@@ -2,8 +2,8 @@ interface ServiceSupportable {
   readonly serviceSupports: any[],
 }
 
-export interface ServiceType extends ServiceSupportable {
-  makeService(): this
+export interface ServiceType<U> {
+  makeService (str: string): U
 }
 
 export class BaseServiceType implements ServiceSupportable {

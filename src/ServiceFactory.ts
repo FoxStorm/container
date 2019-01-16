@@ -4,5 +4,5 @@ export interface IServiceFactory {
 }
 
 export class ServiceFactory implements IServiceFactory {
-  constructor(readonly serviceType: any, readonly serviceSupports: any[]) {}
+  constructor (readonly serviceType: any, readonly serviceSupports: string[]) {}
 }
