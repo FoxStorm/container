@@ -25,7 +25,8 @@ export class ApplicationContainer implements Container {
     const available = this.servicesFor(interfaceName)
 
     if (available.length > 1) {
-      // resolve dissambiguity
+      const resolvedPreference = this.config.resolveService(available, serviceInterface)
+      return resolvedPreference.serviceType.makeService()
     }
 
     if (available.length === 0) {
