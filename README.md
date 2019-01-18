@@ -9,8 +9,11 @@
 interface Logger {
     info (message: string): void
 }
+```
+
+```typescript
 // PrintLogger.ts
-class PrintLogger {
+class PrintLogger implements Logger {
     static makeService (): this {
         return new this()
     }
@@ -18,11 +21,13 @@ class PrintLogger {
         console.log(message)
     }
 }
+```
 
+```typescript
 // FileLogger.ts
 import * as fs from 'fs'
 
-class FileLogger {
+class FileLogger implements Logger{
     static makeService (): this {
         return new this()
     }
@@ -30,7 +35,9 @@ class FileLogger {
         fs.writeFile('foo.txt', message)
     }
 }
+```
 
+```typescript
 // Application.ts
 import { Config, Environment, Services, ApplicationContainer } from 'foxstorm-container'
 
