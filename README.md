@@ -1,12 +1,12 @@
 # FoxStorm Container
 
-📦 Dependency injection / inversion of control framework.
-
 <p align="center">
-  *Component of*
+  <b>Component of</b>
   <br />
   <img src="https://i.imgur.com/2EmQNvF.png" alt="FoxStorm Typescript WEB Framework" width="190" />
 </p>
+
+📦 Dependency injection / inversion of control framework.
 
 FoxStorm Container is a lightweight Inversion of Control container for TypeScript applications. It uses a mechanism to register dependencies which can be retriever later as instance.
 
@@ -25,7 +25,7 @@ FoxStorm Container is a lightweight Inversion of Control container for TypeScrip
 const staging = Environment.new('staging', false)
 ```
 
-To easy create *development*, *testing* and a *production* environments the following methods can be used:
+To easily create *development*, *testing* and a *production* environments the following methods can be used:
 
 ```typescript
 const development = Environment.development() // has isRelease false
@@ -97,6 +97,9 @@ switch (environment.name) {
 }
 const application = new ApplicationContainer(config, environment, services)
 
-const logger = application.retrieveServiceFor(PrintLogger)
+const printLogger = application.retrieveServiceFor(PrintLogger)
+const fileLogger = application.retrieveServiceFor(FileLogger)
+const logger = application.retrieveServiceFor('Logger') // resolved by custom preference
+
 logger.info(`I'm a logger`)
 ```
