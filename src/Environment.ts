@@ -6,12 +6,12 @@ export class Environment {
 
   /// An environment for developing your application.
   static development (): Environment {
-    return new this('development', true)
+    return new this('development', false)
   }
 
   /// An environment for testing your application.
   static testing (): Environment {
-    return new this('testing', true)
+    return new this('testing', false)
   }
 
   constructor (readonly name: string, readonly isRelease: boolean) {}
