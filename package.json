@@ -2,7 +2,7 @@
   "name": "foxstorm-container",
   "version": "0.1.0",
   "description": "📦 Dependency injection / inversion of control framework.",
-  "main": "index.ts",
+  "main": "dist/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/FoxStorm/container"
