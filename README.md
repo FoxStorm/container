@@ -35,11 +35,79 @@ const production = Environment.production() // has isRelease true
 
 ## Config
 
+Config chooses the proper service when multiple services has been registered for the same interface. Assuming this services are registered on the same interface:
+
+```typescript
+const services = new Services()
+
+services.registerWithInterface(PrintLogger, 'Logger')
+services.registerWithInterface(FileLogger, 'Logger')
+```
+
+we need to choose which service should be used:
+
+```typescript
+const config = new Config()
+
+switch (environment.name) {
+    case 'development': {
+        const preference: ConfigPreference = { prefer: PrintLogger, for: 'Logger' }
+        config.usePreference(preference)
+    },
+    case 'production': {
+        const preference: ConfigPreference = { prefer: FileLogger, for: 'Logger' }
+        config.usePreference(preference)
+    }
+}
+```
+
 ## Services
+
+With the `services` object, new services can be registered, configured or even create your own service. There are a couple of ways how you can register a service:
+
+```typescript
+const services = new Services()
+
+services.register(PrintLogger, () => {
+    return new PrintLogger()
+})
+services.registerWithInterface(PrintLogger, 'Logger', () => {
+    return new PrintLogger()
+})
+services.registerWithInterfaces(PrintLogger, [ 'Logger', 'Debuggable' ], () => {
+    return new PrintLogger()
+})
+```
+
+Services can be registered easier if they implement a static `makeService` method.
+
+```typescript
+interface Logger {
+    info (message: string): void
+}
+```
+
+```typescript
+// PrintLogger.ts
+class PrintLogger implements Logger {
+    static makeService (): this {
+        return new this()
+    }
+    info (message: string): void {
+        console.log(message)
+    }
+}
+```
+
+```typescript
+const services = new Services()
+
+services.registerWithInterface(PrintLogger, 'Logger')
+```
 
 ## ApplicationContainer
 
-## Example
+## Full Example
 
 ```typescript
 // Logger.ts
@@ -82,8 +150,8 @@ const environment = Environment.development()
 const config = new Config()
 const services = new Services()
 
-services.register(PrintLogger, 'Logger')
-services.register(FileLogger, 'Logger')
+services.registerWithInterface(PrintLogger, 'Logger')
+services.registerWithInterface(FileLogger, 'Logger')
 
 switch (environment.name) {
     case 'development': {

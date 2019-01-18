@@ -1,28 +1,41 @@
 import { ServiceFactory } from './ServiceFactory'
 import { ServiceDescriptionBuilder } from './ServiceDescriptionBuilder'
 import { Provider } from './Provider'
-import { ServiceType } from './ServiceType'
 
-export class Services {
+export interface ServicesRegistrar {
+  register<S> (service: (new () => S), factory?: () => S): void
+  registerWithInterface<S> (service: (new () => S), serviceInterface: string, factory?: () => S): void
+  registerWithInterfaces<S> (service: (new () => S), serviceInterface: string[], factory?: () => S): void
+  description (): string
+}
+
+export class Services implements ServicesRegistrar {
   readonly factories: ServiceFactory[] = []
   readonly providers: Provider[] = []
 
-  registerWithInterface<S> (service: ServiceType<S>, serviceInterface: string) {
-    const factory = new ServiceFactory(service, [serviceInterface])
-    this.registerFactoryWithInterface(factory)
+  register<S> (service: (new () => S), factory?: () => S): void {
+    const serviceFactory = new ServiceFactory(service, [])
+    this.registerFactoryWithInterface(serviceFactory)
   }
 
-  registerWithInterfaces<S> (service: ServiceType<S>, serviceInterface: string[]) {
-    const factory = new ServiceFactory(service, serviceInterface)
-    this.registerFactoryWithInterface(factory)
+  registerWithInterface<S> (service: (new () => S), serviceInterface: string, factory?: () => S) {
+    const serviceFactory = new ServiceFactory(service, [serviceInterface])
+    this.registerFactoryWithInterface(serviceFactory)
   }
 
-  register<S> (service: ServiceType<S>) {
-    const factory = new ServiceFactory(service, [])
-    this.registerFactoryWithInterface(factory)
+  registerWithInterfaces<S> (service: (new () => S), serviceInterface: string[], factory?: () => S) {
+    const serviceFactory = new ServiceFactory(service, serviceInterface)
+    this.registerFactoryWithInterface(serviceFactory)
   }
 
-  registerFactoryWithInterface (factory: ServiceFactory): void {
+  description (): string {
+    return new ServiceDescriptionBuilder()
+    .withServices(this.factories)
+    .withProviders(this.providers)
+    .build()
+  }
+
+  private registerFactoryWithInterface (factory: ServiceFactory): void {
     const existing = this.factories.indexOf(factory)
 
     if (existing) {
@@ -30,12 +43,5 @@ export class Services {
     }
 
     this.factories.push(factory)
-  }
-
-  description () {
-    new ServiceDescriptionBuilder()
-      .withServices(this.factories)
-      .withProviders(this.providers)
-      .build()
   }
 }

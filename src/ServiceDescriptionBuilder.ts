@@ -34,6 +34,6 @@ export class ServiceDescriptionBuilder {
   }
 
   build () {
-    this.description.join('\n')
+    return this.description.join('\n')
   }
 }
