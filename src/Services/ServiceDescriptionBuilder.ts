@@ -1,5 +1,5 @@
+import { Provider } from '../Provider'
 import { ServiceFactory } from './ServiceFactory'
-import { Provider } from './Provider'
 
 export class ServiceDescriptionBuilder {
   readonly description: string[] = []

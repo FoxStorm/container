@@ -1,16 +1,15 @@
 import { Environment } from './Environment'
-import { Services } from './Services'
-import { ServiceFactory } from './ServiceFactory'
+import { Services } from './Services/Services'
 import { ContainerError } from './ContainerError'
 import { Config } from './Config'
-import { Service } from './Service'
+import { ServiceFactory } from './Services/ServiceFactory'
 
 export interface Container {
   readonly config: Config
   readonly environment: Environment
   readonly services: Services,
   readonly booted: boolean,
-  retrieveServiceFor (serviceInterface: string): Service
+  retrieveServiceFor (serviceInterface: string): any
 }
 
 export class ApplicationContainer implements Container {
@@ -20,13 +19,13 @@ export class ApplicationContainer implements Container {
     this.booted = false
   }
 
-  retrieveServiceFor<T> (serviceInterface: string | (new () => T)): T {
+  retrieveServiceFor<T> (serviceInterface: string | T): ServiceFactory {
     const interfaceName = this.resolveInterfaceName(serviceInterface)
     const available = this.servicesFor(interfaceName)
 
     if (available.length > 1) {
       const resolvedPreference = this.config.resolveService(available, serviceInterface)
-      return resolvedPreference.serviceType.makeService()
+      return resolvedPreference.makeService(this)
     }
 
     if (available.length === 0) {
@@ -40,7 +39,7 @@ export class ApplicationContainer implements Container {
       )
     }
 
-    return available[0].serviceType.makeService()
+    return available[0].makeService(this)
   }
 
   private servicesFor (supportedInterface: any): ServiceFactory[] {

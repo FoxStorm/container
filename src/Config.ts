@@ -1,4 +1,4 @@
-import { ServiceFactory } from './ServiceFactory'
+import { ServiceFactory } from './Services/ServiceFactory'
 
 export type ConfigPreference = {
   readonly prefer: any
@@ -12,7 +12,7 @@ export class Config {
     this.preferences.push(preference)
   }
 
-  resolveService<T> (fromAvailableServices: ServiceFactory[], serviceInterface: string | (new () => T)): ServiceFactory {
+  resolveService<T> (fromAvailableServices: ServiceFactory[], serviceInterface: string | T): ServiceFactory {
     const foundPreference = this.preferences.find(preference => preference.for === serviceInterface)
 
     if (!foundPreference) {

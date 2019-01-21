@@ -63,20 +63,24 @@ switch (environment.name) {
 
 ## Services
 
-With the `services` object, new services can be registered, configured or even create your own service. There are a couple of ways how you can register a service:
+New services can be registered, configured or even created. There are a couple of ways how you can register a service:
 
 ```typescript
 const services = new Services()
 
-services.register(PrintLogger, () => {
-    return new PrintLogger()
+services.registerInterfaceWithFactory(PrintLogger, () => {
+  return new PrintLogger()
 })
-services.registerWithInterface(PrintLogger, 'Logger', () => {
-    return new PrintLogger()
+services.registerInterfaceWithFactory(PrintLogger, 'Logger', () => {
+  return new PrintLogger()
 })
-services.registerWithInterfaces(PrintLogger, [ 'Logger', 'Debuggable' ], () => {
-    return new PrintLogger()
+services.registerServiceWithInterfacesAndFactory(PrintLogger, [ 'Logger', 'ErrorLogger' ], () => {
+  return new PrintLogger()
 })
+
+try  {
+  services.registerProvider(new PrintLoggerProvider())
+} catch { /* throw some error */ }
 ```
 
 Services can be registered easier if they implement a static `makeService` method.
@@ -102,7 +106,10 @@ class PrintLogger implements Logger {
 ```typescript
 const services = new Services()
 
-services.registerWithInterface(PrintLogger, 'Logger')
+services.registerInstance(new PrintLogger())
+services.registerInstanceWithInterface(new PrintLogger(), 'Logger')
+services.registerInstanceWithInterfaces(new PrintLogger(), [ 'Logger', 'ErrorLogger' ])
+services.registerService(PrintLogger)
 ```
 
 ## ApplicationContainer
