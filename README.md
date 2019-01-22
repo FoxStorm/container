@@ -19,7 +19,7 @@ FoxStorm Container is a lightweight Inversion of Control container for TypeScrip
 
 ## Environment
 
-`Environment` is used to create a environment instance by passing a string as the _name_ and a boolean as _isRelease_.
+Create `Environment` instances by passing a string as the _name_ and a boolean as _isRelease_.
 
 ```typescript
 const staging = Environment.new('staging', false)
@@ -35,7 +35,7 @@ const production = Environment.production() // has isRelease true
 
 ## Config
 
-Config chooses the proper service when multiple services has been registered for the same interface. Assuming this services are registered on the same interface:
+`Config` chooses the proper service when multiple services has been registered for the same interface. Assuming this services are registered on the same interface:
 
 ```typescript
 const services = new Services()
@@ -50,20 +50,20 @@ we need to choose which service should be used:
 const config = new Config()
 
 switch (environment.name) {
-    case 'development': {
-        const preference: ConfigPreference = { prefer: PrintLogger, for: 'Logger' }
-        config.usePreference(preference)
-    },
-    case 'production': {
-        const preference: ConfigPreference = { prefer: FileLogger, for: 'Logger' }
-        config.usePreference(preference)
-    }
+  case 'development': {
+    const preference: ConfigPreference = { prefer: PrintLogger, for: 'Logger' }
+    config.usePreference(preference)
+  },
+  case 'production': {
+    const preference: ConfigPreference = { prefer: FileLogger, for: 'Logger' }
+    config.usePreference(preference)
+  }
 }
 ```
 
 ## Services
 
-New services can be registered, configured or even created. There are a couple of ways how you can register a service:
+New services can be registered, configured or created. There are a couple of ways how you can register a service:
 
 ```typescript
 const services = new Services()
@@ -87,19 +87,19 @@ Services can be registered easier if they implement a static `makeService` metho
 
 ```typescript
 interface Logger {
-    info (message: string): void
+  info (message: string): void
 }
 ```
 
 ```typescript
 // PrintLogger.ts
 class PrintLogger implements Logger {
-    static makeService (): this {
-        return new this()
-    }
-    info (message: string): void {
-        console.log(message)
-    }
+  static makeService (): this {
+    return new this()
+  }
+  info (message: string): void {
+    console.log(message)
+  }
 }
 ```
 
@@ -114,24 +114,38 @@ services.registerService(PrintLogger)
 
 ## ApplicationContainer
 
+The `ApplicationContainer` is initialised with the `Config`, `Environment` and the `Services` and provides a way to retrieve services based on the provided parameters:
+
+```typescript
+const environment = Environment.development()
+const config = customConfig || new Config()
+const services = new Services()
+
+services.registerWithInterface(PrintLogger, 'Logger')
+
+const application = new ApplicationContainer(config, environment, services)
+
+const printLogger = application.retrieveServiceFor(PrintLogger)
+```
+
 ## Full Example
 
 ```typescript
 // Logger.ts
 interface Logger {
-    info (message: string): void
+  info (message: string): void
 }
 ```
 
 ```typescript
 // PrintLogger.ts
 class PrintLogger implements Logger {
-    static makeService (): this {
-        return new this()
-    }
-    info (message: string): void {
-        console.log(message)
-    }
+  static makeService (): this {
+    return new this()
+  }
+  info (message: string): void {
+    console.log(message)
+  }
 }
 ```
 
@@ -140,12 +154,12 @@ class PrintLogger implements Logger {
 import * as fs from 'fs'
 
 class FileLogger implements Logger{
-    static makeService (): this {
-        return new this()
-    }
-    info (message: string): void {
-        fs.writeFile('foo.txt', message)
-    }
+  static makeService (): this {
+      return new this()
+  }
+  info (message: string): void {
+    fs.writeFile('foo.txt', message)
+  }
 }
 ```
 
@@ -161,14 +175,14 @@ services.registerWithInterface(PrintLogger, 'Logger')
 services.registerWithInterface(FileLogger, 'Logger')
 
 switch (environment.name) {
-    case 'development': {
-        const preference: ConfigPreference = { prefer: PrintLogger, for: 'Logger' }
-        config.usePreference(preference)
-    },
-    case 'production': {
-        const preference: ConfigPreference = { prefer: FileLogger, for: 'Logger' }
-        config.usePreference(preference)
-    }
+  case 'development': {
+    const preference: ConfigPreference = { prefer: PrintLogger, for: 'Logger' }
+    config.usePreference(preference)
+  },
+  case 'production': {
+    const preference: ConfigPreference = { prefer: FileLogger, for: 'Logger' }
+    config.usePreference(preference)
+  }
 }
 const application = new ApplicationContainer(config, environment, services)
 
