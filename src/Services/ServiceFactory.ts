@@ -1,4 +1,4 @@
-import { Container } from './ApplicationContainer'
+import { Container } from '../ApplicationContainer'
 
 export interface ServiceFactory {
   readonly serviceType: any

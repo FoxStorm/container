@@ -1,4 +1,4 @@
-import { Services } from './Services';
+import { Services } from './Services/Services';
 interface WillBoot {
     willBoot(container: any): Promise<void>;
 }

@@ -13,7 +13,7 @@ class ApplicationContainer {
         const available = this.servicesFor(interfaceName);
         if (available.length > 1) {
             const resolvedPreference = this.config.resolveService(available, serviceInterface);
-            return resolvedPreference.serviceType.makeService();
+            return resolvedPreference.makeService(this);
         }
         if (available.length === 0) {
             throw new ContainerError_1.ContainerError('make', `No services available for ${interfaceName}`, [
@@ -21,7 +21,7 @@ class ApplicationContainer {
                 `services.register(${interfaceName}) { ... }.`
             ]);
         }
-        return available[0].serviceType.makeService();
+        return available[0].makeService(this);
     }
     servicesFor(supportedInterface) {
         return this.services.factories.filter(factory => {

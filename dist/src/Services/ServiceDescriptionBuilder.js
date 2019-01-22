@@ -35,7 +35,7 @@ class ServiceDescriptionBuilder {
         return this;
     }
     build() {
-        this.description.join('\n');
+        return this.description.join('\n');
     }
 }
 exports.ServiceDescriptionBuilder = ServiceDescriptionBuilder;

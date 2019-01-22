@@ -6,9 +6,9 @@ import { ApplicationContainer } from '../ApplicationContainer'
 import { Provider, BaseProvider } from '../Provider'
 
 describe('ApplicationContainer', () => {
-  const NewApplication = () => {
+  const NewApplication = (customConfig?: Config) => {
     const environment = Environment.development()
-    const config = new Config()
+    const config = customConfig || new Config()
     const services = new Services()
     const application = new ApplicationContainer(config, environment, services)
 
@@ -37,6 +37,16 @@ describe('ApplicationContainer', () => {
       }
     }
 
+    class PrintLogger implements Logger {
+      static makeService (): PrintLogger {
+        return new this()
+      }
+
+      returnHaHa (): string {
+        return 'ha ha'
+      }
+    }
+
     const serviceEntity: typeof FileLogger = FileLogger
     const serviceInstance: FileLogger = new serviceEntity()
     const interfaceEntity: string = 'Logger'
@@ -45,6 +55,11 @@ describe('ApplicationContainer', () => {
       service: { entity: serviceEntity, str: 'FileLogger' },
       interface: { entity: interfaceEntity, str: 'Logger' }
     }
+
+    const defaultConfig = new Config()
+    const customConfig = new Config()
+    const configPreference = { prefer: PrintLogger, for: 'Logger' }
+    customConfig.usePreference(configPreference)
 
     for (const entityType in servicesConfig) {
       const configService = servicesConfig[entityType]
