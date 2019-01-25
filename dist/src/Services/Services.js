@@ -63,13 +63,28 @@ class Services {
     // services.registerInterfaceWithFactory(PrintLogger, [ 'Logger', 'ErrorLogger' ], () => {
     //   return new PrintLogger()
     // })
-    registerServiceWithInterfacesAndFactory(serviceType, supportedInterface, factory) {
-        const serviceFactory = new BaseServiceFactory_1.BaseServiceFactory(serviceType, supportedInterface, (container) => {
+    registerServiceWithInterfacesAndFactory(serviceType, supportedInterfaces, factory) {
+        const serviceFactory = new BaseServiceFactory_1.BaseServiceFactory(serviceType, supportedInterfaces, (container) => {
             try {
                 return factory(container);
             }
             catch (_a) {
                 throw new ServicesError_1.ServicesError('registerServiceWithInterfacesAndFactory', 'Error executing factory');
+            }
+        });
+        this.registerFactory(serviceFactory);
+    }
+    // Registers a `Service` creating closure (service factory) conforming to zero or many interfaces.
+    // services.registerInterfaceWithFactory(PrintLogger, [ 'Logger', 'ErrorLogger' ], () => {
+    //   return new PrintLogger()
+    // })
+    registerInterfaceAndFactory(supportedInterface, factory) {
+        const serviceFactory = new BaseServiceFactory_1.BaseServiceFactory(supportedInterface, [supportedInterface], (container) => {
+            try {
+                return factory(container);
+            }
+            catch (_a) {
+                throw new ServicesError_1.ServicesError('registerInterfaceAndFactory', 'Error executing factory');
             }
         });
         this.registerFactory(serviceFactory);

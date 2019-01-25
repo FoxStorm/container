@@ -7,6 +7,33 @@ const Services_1 = require("../Services/Services");
 const ApplicationContainer_1 = require("../ApplicationContainer");
 const Provider_1 = require("../Provider");
 describe('ApplicationContainer', () => {
+    class FakeFileLogger {
+        constructor(path) {
+            this.path = path;
+        }
+        static makeService() {
+            return new this('/default/path/app.log');
+        }
+        returnHaHa() {
+            return 'ha ha';
+        }
+    }
+    class FakeLoggerProvider extends Provider_1.BaseProvider {
+        didBoot() {
+            return Promise.resolve();
+        }
+        register(services) {
+            services.registerInstance(new FakeFileLogger());
+        }
+    }
+    class ConsoleLogger {
+        constructor(path) {
+            this.path = path;
+        }
+        returnMeow() {
+            return 'meow';
+        }
+    }
     const NewApplication = (customConfig) => {
         const environment = Environment_1.Environment.development();
         const config = customConfig || new Config_1.Config();
@@ -21,36 +48,13 @@ describe('ApplicationContainer', () => {
         });
     });
     describe('.retrieveServiceFor', () => {
-        class FileLogger {
-            constructor(path) {
-                this.path = path;
-            }
-            static makeService() {
-                return new this('/default/path/app.log');
-            }
-            returnHaHa() {
-                return 'ha ha';
-            }
-        }
-        class PrintLogger {
-            static makeService() {
-                return new this();
-            }
-            returnHaHa() {
-                return 'ha ha';
-            }
-        }
-        const serviceEntity = FileLogger;
+        const serviceEntity = FakeFileLogger;
         const serviceInstance = new serviceEntity();
-        const interfaceEntity = 'Logger';
+        const interfaceEntity = 'FakeLogger';
         const servicesConfig = {
-            service: { entity: serviceEntity, str: 'FileLogger' },
-            interface: { entity: interfaceEntity, str: 'Logger' }
+            service: { entity: serviceEntity, str: 'FakeFileLogger' },
+            interface: { entity: interfaceEntity, str: 'FakeLogger' }
         };
-        const defaultConfig = new Config_1.Config();
-        const customConfig = new Config_1.Config();
-        const configPreference = { prefer: PrintLogger, for: 'Logger' };
-        customConfig.usePreference(configPreference);
         for (const entityType in servicesConfig) {
             const configService = servicesConfig[entityType];
             describe('when there is no service registered', () => {
@@ -60,7 +64,7 @@ describe('ApplicationContainer', () => {
                 });
             });
             describe(`when the service is registered using .registerInstanceWithInterface`, () => {
-                it(`retrieve the correct instance when the service is retrieved by ${entityType}`, () => {
+                it(`retrieves the correct instance when the service is retrieved by ${entityType}`, () => {
                     const { application, services } = NewApplication();
                     services.registerInstanceWithInterface(serviceInstance, interfaceEntity);
                     const service = application.retrieveServiceFor(configService.entity);
@@ -74,7 +78,7 @@ describe('ApplicationContainer', () => {
                 });
             });
             describe(`when the service is registered using .registerInstanceWithInterfaces`, () => {
-                it(`retrieve the correct instance when the service is retrieved by ${entityType}`, () => {
+                it(`retrieves the correct instance when the service is retrieved by ${entityType}`, () => {
                     const { application, services } = NewApplication();
                     services.registerInstanceWithInterfaces(serviceInstance, [interfaceEntity]);
                     const service = application.retrieveServiceFor(configService.entity);
@@ -120,7 +124,7 @@ describe('ApplicationContainer', () => {
             it(`retrieve the correct instance when the service is retrieved by ${serviceEntity.name}`, () => {
                 const { application, services } = NewApplication();
                 services.registerServiceWithFactory(serviceEntity, () => {
-                    return new FileLogger('customPath');
+                    return new FakeFileLogger('customPath');
                 });
                 const service = application.retrieveServiceFor(serviceEntity);
                 chai_1.expect(service).to.be.instanceOf(serviceEntity);
@@ -128,64 +132,75 @@ describe('ApplicationContainer', () => {
             it(`returns the correct value from an instance method when the service is retrieved by ${serviceEntity.name}`, () => {
                 const { application, services } = NewApplication();
                 services.registerServiceWithFactory(serviceEntity, () => {
-                    return new FileLogger('customPath');
+                    return new FakeFileLogger('customPath');
                 });
                 const service = application.retrieveServiceFor(serviceEntity);
                 chai_1.expect(service.returnHaHa()).to.eq('ha ha');
             });
         });
         describe(`when the service is registered using .registerServiceWithInterfaceAndFactory`, () => {
-            class FileLogger2 {
-                constructor(path) {
-                    this.path = path;
-                }
-                returnMeow() {
-                    return 'meow';
-                }
-            }
-            it(`retrieve the correct instance when the service is retrieved by FileLogger2`, () => {
+            it(`retrieve the correct instance when the service is retrieved by the service`, () => {
                 const { application, services } = NewApplication();
-                services.registerServiceWithInterfaceAndFactory(FileLogger2, 'Logger2', () => {
-                    return new FileLogger2('customPath');
+                services.registerServiceWithInterfaceAndFactory(ConsoleLogger, 'FakeConsole', () => {
+                    return new ConsoleLogger('customPath');
                 });
-                const service = application.retrieveServiceFor(FileLogger2);
-                chai_1.expect(service).to.be.instanceOf(FileLogger2);
+                const service = application.retrieveServiceFor(ConsoleLogger);
+                chai_1.expect(service).to.be.instanceOf(ConsoleLogger);
             });
-            it(`returns the correct value from an instance method when the service is retrieved by: FileLogger2`, () => {
+            it(`returns the correct value from an instance method when the service is retrieved by the service`, () => {
                 const { application, services } = NewApplication();
-                services.registerServiceWithInterfaceAndFactory(FileLogger2, 'Logger2', () => {
-                    return new FileLogger2('customPath');
+                services.registerServiceWithInterfaceAndFactory(ConsoleLogger, 'FakeConsole', () => {
+                    return new ConsoleLogger('customPath');
                 });
-                const service = application.retrieveServiceFor(FileLogger2);
+                const service = application.retrieveServiceFor(ConsoleLogger);
                 chai_1.expect(service.returnMeow()).to.eq('meow');
             });
-            it(`returns the correct constructor value when the service is retrieved by: FileLogger2`, () => {
+            it(`returns the correct constructor value when the service is retrieved by the service`, () => {
                 const { application, services } = NewApplication();
-                services.registerServiceWithInterfaceAndFactory(FileLogger2, 'Logger2', () => {
-                    return new FileLogger2('customPath');
+                services.registerServiceWithInterfaceAndFactory(ConsoleLogger, 'FakeConsole', () => {
+                    return new ConsoleLogger('customPath');
                 });
-                const service = application.retrieveServiceFor(FileLogger2);
+                const service = application.retrieveServiceFor(ConsoleLogger);
+                chai_1.expect(service.path).to.eq('customPath');
+            });
+        });
+        describe(`when the service is registered using .registerInterfaceAndFactory`, () => {
+            it(`retrieve the correct instance when the service is retrieved by an interface`, () => {
+                const { application, services } = NewApplication();
+                services.registerInterfaceAndFactory('FakeConsole', () => {
+                    return new ConsoleLogger('customPath');
+                });
+                const service = application.retrieveServiceFor('FakeConsole');
+                chai_1.expect(service).to.be.instanceOf(ConsoleLogger);
+            });
+            it(`returns the correct value from an instance method when the service is retrieved by an interface`, () => {
+                const { application, services } = NewApplication();
+                services.registerInterfaceAndFactory('FakeConsole', () => {
+                    return new ConsoleLogger('customPath');
+                });
+                const service = application.retrieveServiceFor('FakeConsole');
+                chai_1.expect(service.returnMeow()).to.eq('meow');
+            });
+            it(`returns the correct constructor value when the service is retrieved by an interface`, () => {
+                const { application, services } = NewApplication();
+                services.registerInterfaceAndFactory('FakeConsole', () => {
+                    return new ConsoleLogger('customPath');
+                });
+                const service = application.retrieveServiceFor('FakeConsole');
                 chai_1.expect(service.path).to.eq('customPath');
             });
         });
         describe(`when the service is registered using .registerProvider`, () => {
-            class LoggerProvider extends Provider_1.BaseProvider {
-                didBoot() {
-                    return Promise.resolve();
-                }
-                register(services) {
-                    services.registerInstance(new FileLogger());
-                }
-            }
-            const loggerProvider = new LoggerProvider();
             it(`retrieve the correct instance when the service is retrieved by ${serviceEntity.name}`, () => {
                 const { application, services } = NewApplication();
+                const loggerProvider = new FakeLoggerProvider();
                 services.registerProvider(loggerProvider);
                 const service = application.retrieveServiceFor(serviceEntity);
                 chai_1.expect(service).to.be.instanceOf(serviceEntity);
             });
             it(`returns the correct value from an instance method when the service is retrieved by ${serviceEntity.name}`, () => {
                 const { application, services } = NewApplication();
+                const loggerProvider = new FakeLoggerProvider();
                 services.registerProvider(loggerProvider);
                 const service = application.retrieveServiceFor(serviceEntity);
                 chai_1.expect(service.returnHaHa()).to.eq('ha ha');
