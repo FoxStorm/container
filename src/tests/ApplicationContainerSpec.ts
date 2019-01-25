@@ -225,6 +225,42 @@ describe('ApplicationContainer', () => {
       })
     })
 
+    describe(`when the service is registered using .registerInterfaceAndFactory`, () => {
+      it(`retrieve the correct instance when the service is retrieved by an interface`, () => {
+        const { application, services } = NewApplication()
+
+        services.registerInterfaceAndFactory('FakeConsole', () => {
+          return new ConsoleLogger('customPath')
+        })
+
+        const service = application.retrieveServiceFor('FakeConsole')
+
+        expect(service).to.be.instanceOf(ConsoleLogger)
+      })
+      it(`returns the correct value from an instance method when the service is retrieved by an interface`, () => {
+        const { application, services } = NewApplication()
+
+        services.registerInterfaceAndFactory('FakeConsole', () => {
+          return new ConsoleLogger('customPath')
+        })
+
+        const service: any = application.retrieveServiceFor('FakeConsole')
+
+        expect(service.returnMeow()).to.eq('meow')
+      })
+      it(`returns the correct constructor value when the service is retrieved by an interface`, () => {
+        const { application, services } = NewApplication()
+
+        services.registerInterfaceAndFactory('FakeConsole', () => {
+          return new ConsoleLogger('customPath')
+        })
+
+        const service: any = application.retrieveServiceFor('FakeConsole')
+
+        expect(service.path).to.eq('customPath')
+      })
+    })
+
     describe(`when the service is registered using .registerProvider`, () => {
       it(`retrieve the correct instance when the service is retrieved by ${serviceEntity.name}`, () => {
         const { application, services } = NewApplication()

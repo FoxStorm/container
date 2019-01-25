@@ -87,10 +87,23 @@ export class Services implements ServicesRegistrar {
   // services.registerInterfaceWithFactory(PrintLogger, [ 'Logger', 'ErrorLogger' ], () => {
   //   return new PrintLogger()
   // })
-  registerServiceWithInterfacesAndFactory<S> (serviceType: (new (...args: any[]) => S), supportedInterface: string[], factory: (container: Container) => S): void {
-    const serviceFactory = new BaseServiceFactory(serviceType, supportedInterface, (container: Container) => {
+  registerServiceWithInterfacesAndFactory<S> (serviceType: (new (...args: any[]) => S), supportedInterfaces: string[], factory: (container: Container) => S): void {
+    const serviceFactory = new BaseServiceFactory(serviceType, supportedInterfaces, (container: Container) => {
       try { return factory(container) } catch {
         throw new ServicesError('registerServiceWithInterfacesAndFactory', 'Error executing factory')
+      }
+    })
+    this.registerFactory(serviceFactory)
+  }
+
+  // Registers a `Service` creating closure (service factory) conforming to zero or many interfaces.
+  // services.registerInterfaceWithFactory(PrintLogger, [ 'Logger', 'ErrorLogger' ], () => {
+  //   return new PrintLogger()
+  // })
+  registerInterfaceAndFactory<S> (supportedInterface: string, factory: (container: Container) => S): void {
+    const serviceFactory = new BaseServiceFactory(supportedInterface, [supportedInterface], (container: Container) => {
+      try { return factory(container) } catch {
+        throw new ServicesError('registerInterfaceAndFactory', 'Error executing factory')
       }
     })
     this.registerFactory(serviceFactory)
