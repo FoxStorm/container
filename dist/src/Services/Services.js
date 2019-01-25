@@ -75,7 +75,7 @@ class Services {
         this.registerFactory(serviceFactory);
     }
     // Registers a `Service` creating closure (service factory) conforming to zero or many interfaces.
-    // services.registerInterfaceWithFactory(PrintLogger, [ 'Logger', 'ErrorLogger' ], () => {
+    // services.registerInterfaceAndFactory('Logger', () => {
     //   return new PrintLogger()
     // })
     registerInterfaceAndFactory(supportedInterface, factory) {

@@ -9,6 +9,7 @@ export interface ServicesRegistrar {
     registerServiceWithFactory<S>(serviceType: (new (...args: any[]) => S), factory: (container: Container) => S): void;
     registerServiceWithInterfaceAndFactory<S>(serviceType: (new (...args: any[]) => S), supportedInterface: string, factory: (container: Container) => S): void;
     registerServiceWithInterfacesAndFactory<S>(serviceType: (new (...args: any[]) => S), supportedInterface: string[], factory: (container: Container) => S): void;
+    registerInterfaceAndFactory<S>(supportedInterface: string, factory: (container: Container) => S): void;
     registerService<S>(serviceType: (new (...args: any[]) => S)): void;
     registerProvider(provider: Provider): void;
     registerFactory(factory: BaseServiceFactory): void;

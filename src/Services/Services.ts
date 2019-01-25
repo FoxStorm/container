@@ -16,6 +16,7 @@ export interface ServicesRegistrar {
   registerServiceWithFactory<S> (serviceType: (new (...args: any[]) => S), factory: (container: Container) => S): void
   registerServiceWithInterfaceAndFactory<S> (serviceType: (new (...args: any[]) => S), supportedInterface: string, factory: (container: Container) => S): void
   registerServiceWithInterfacesAndFactory<S> (serviceType: (new (...args: any[]) => S), supportedInterface: string[], factory: (container: Container) => S): void
+  registerInterfaceAndFactory<S> (supportedInterface: string, factory: (container: Container) => S): void
 
   // TYPE
   registerService<S> (serviceType: (new (...args: any[]) => S)): void
@@ -97,7 +98,7 @@ export class Services implements ServicesRegistrar {
   }
 
   // Registers a `Service` creating closure (service factory) conforming to zero or many interfaces.
-  // services.registerInterfaceWithFactory(PrintLogger, [ 'Logger', 'ErrorLogger' ], () => {
+  // services.registerInterfaceAndFactory('Logger', () => {
   //   return new PrintLogger()
   // })
   registerInterfaceAndFactory<S> (supportedInterface: string, factory: (container: Container) => S): void {
