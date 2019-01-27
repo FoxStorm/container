@@ -96,6 +96,18 @@ class Services {
         const serviceFactory = new TypeServiceFactory_1.TypeServiceFactory(serviceType);
         this.registerFactory(serviceFactory);
     }
+    // Registers a `Service` creating closure (service factory).
+    // services.registerServiceWithInterface(PrintLogger, 'Logger')
+    registerServiceWithInterface(serviceType, supportedInterface) {
+        const serviceFactory = new TypeServiceFactory_1.TypeServiceFactory(serviceType, [supportedInterface]);
+        this.registerFactory(serviceFactory);
+    }
+    // Registers a `Service` creating closure (service factory).
+    // services.registerServiceWithInterfaces(PrintLogger, [ 'Logger', 'ErrorLogger' ])
+    registerServiceWithInterfaces(serviceType, supportedInterfaces) {
+        const serviceFactory = new TypeServiceFactory_1.TypeServiceFactory(serviceType, supportedInterfaces);
+        this.registerFactory(serviceFactory);
+    }
     // PROVIDER
     // Registers a `Provider` to the services. This will automatically register all of the `Provider`'s available
     // try  { services.registerProvider(new PrintLoggerProvider()) } catch { }

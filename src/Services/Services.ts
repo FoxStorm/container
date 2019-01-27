@@ -20,6 +20,8 @@ export interface ServicesRegistrar {
 
   // TYPE
   registerService<S> (serviceType: (new (...args: any[]) => S)): void
+  registerServiceWithInterface<S> (serviceType: (new (...args: any[]) => S), supportedInterface: string): void
+  registerServiceWithInterfaces<S> (serviceType: (new (...args: any[]) => S), supportedInterfaces: string[]): void
 
   // PROVIDER
   registerProvider (provider: Provider): void
@@ -116,6 +118,20 @@ export class Services implements ServicesRegistrar {
   // services.registerService(PrintLogger)
   registerService<S> (serviceType: (new (...args: any[]) => S)): void {
     const serviceFactory = new TypeServiceFactory(serviceType)
+    this.registerFactory(serviceFactory)
+  }
+
+  // Registers a `Service` creating closure (service factory).
+  // services.registerServiceWithInterface(PrintLogger, 'Logger')
+  registerServiceWithInterface<S> (serviceType: (new (...args: any[]) => S), supportedInterface: string): void {
+    const serviceFactory = new TypeServiceFactory(serviceType, [supportedInterface])
+    this.registerFactory(serviceFactory)
+  }
+
+  // Registers a `Service` creating closure (service factory).
+  // services.registerServiceWithInterfaces(PrintLogger, [ 'Logger', 'ErrorLogger' ])
+  registerServiceWithInterfaces<S> (serviceType: (new (...args: any[]) => S), supportedInterfaces: string[]): void {
+    const serviceFactory = new TypeServiceFactory(serviceType, supportedInterfaces)
     this.registerFactory(serviceFactory)
   }
 

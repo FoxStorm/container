@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class TypeServiceFactory {
-    constructor(serviceType) {
+    constructor(serviceType, serviceSupports = []) {
         this.serviceType = serviceType;
-        this.serviceSupports = [];
+        this.serviceSupports = serviceSupports;
     }
     makeService() {
         try {

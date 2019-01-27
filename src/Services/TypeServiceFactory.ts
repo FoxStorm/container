@@ -5,9 +5,7 @@ export interface ServiceType<U> {
 }
 
 export class TypeServiceFactory implements ServiceFactory {
-  readonly serviceSupports: any[] = []
-
-  constructor (readonly serviceType: any) {}
+  constructor (readonly serviceType: any, readonly serviceSupports: string[] = []) {}
 
   makeService () {
     try { return this.serviceType.makeService() } catch { throw new Error() }

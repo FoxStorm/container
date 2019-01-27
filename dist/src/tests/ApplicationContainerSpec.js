@@ -190,6 +190,50 @@ describe('ApplicationContainer', () => {
                 chai_1.expect(service.path).to.eq('customPath');
             });
         });
+        describe(`when the service is registered using .registerServiceWithInterface`, () => {
+            it(`retrieve the correct instance when the service is retrieved by an interface`, () => {
+                const { application, services } = NewApplication();
+                services.registerServiceWithInterface(FakeFileLogger, 'FakeLogger');
+                const service = application.retrieveServiceFor('FakeLogger');
+                chai_1.expect(service).to.be.instanceOf(FakeFileLogger);
+            });
+            it(`returns the correct value from an instance method when the service is retrieved by an interface`, () => {
+                const { application, services } = NewApplication();
+                services.registerServiceWithInterface(FakeFileLogger, 'FakeLogger');
+                const service = application.retrieveServiceFor('FakeLogger');
+                chai_1.expect(service.returnHaHa()).to.eq('ha ha');
+            });
+            it(`returns the correct constructor value when the service is retrieved by an interface`, () => {
+                const { application, services } = NewApplication();
+                services.registerInterfaceAndFactory('FakeConsole', () => {
+                    return new ConsoleLogger('customPath');
+                });
+                const service = application.retrieveServiceFor('FakeConsole');
+                chai_1.expect(service.path).to.eq('customPath');
+            });
+        });
+        describe(`when the service is registered using .registerServiceWithInterfaces`, () => {
+            it(`retrieve the correct instance when the service is retrieved by an interface`, () => {
+                const { application, services } = NewApplication();
+                services.registerServiceWithInterfaces(FakeFileLogger, ['FakeLogger', 'ErrorLogger']);
+                const service = application.retrieveServiceFor('ErrorLogger');
+                chai_1.expect(service).to.be.instanceOf(FakeFileLogger);
+            });
+            it(`returns the correct value from an instance method when the service is retrieved by an interface`, () => {
+                const { application, services } = NewApplication();
+                services.registerServiceWithInterfaces(FakeFileLogger, ['FakeLogger', 'ErrorLogger']);
+                const service = application.retrieveServiceFor('ErrorLogger');
+                chai_1.expect(service.returnHaHa()).to.eq('ha ha');
+            });
+            it(`returns the correct constructor value when the service is retrieved by an interface`, () => {
+                const { application, services } = NewApplication();
+                services.registerInterfaceAndFactory('FakeConsole', () => {
+                    return new ConsoleLogger('customPath');
+                });
+                const service = application.retrieveServiceFor('FakeConsole');
+                chai_1.expect(service.path).to.eq('customPath');
+            });
+        });
         describe(`when the service is registered using .registerProvider`, () => {
             it(`retrieve the correct instance when the service is retrieved by ${serviceEntity.name}`, () => {
                 const { application, services } = NewApplication();
