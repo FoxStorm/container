@@ -19,7 +19,7 @@ export class ApplicationContainer implements Container {
     this.booted = false
   }
 
-  retrieveServiceFor<T> (serviceInterface: string | T): ServiceFactory {
+  retrieveServiceFor<T> (serviceInterface: string | (new () => T)): T {
     const interfaceName = this.resolveInterfaceName(serviceInterface)
     const available = this.servicesFor(interfaceName)
 
