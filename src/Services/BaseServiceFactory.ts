@@ -11,6 +11,6 @@ export class BaseServiceFactory implements ServiceFactory {
   makeService (container: Container): any {
     try {
       return this.closure(container)
-    } catch { throw new Error() }
+    } catch (error) { throw error }
   }
 }

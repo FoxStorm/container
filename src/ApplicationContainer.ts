@@ -9,7 +9,7 @@ export interface Container {
   readonly environment: Environment
   readonly services: Services,
   readonly booted: boolean,
-  retrieveServiceFor (serviceInterface: string): any
+  retrieveServiceFor<T> (serviceInterface: string | (new (...args: any) => T)): T
 }
 
 export class ApplicationContainer implements Container {
@@ -19,7 +19,7 @@ export class ApplicationContainer implements Container {
     this.booted = false
   }
 
-  retrieveServiceFor<T> (serviceInterface: string | (new () => T)): T {
+  retrieveServiceFor<T> (serviceInterface: string | (new (...args: any) => T)): T {
     const interfaceName = this.resolveInterfaceName(serviceInterface)
     const available = this.servicesFor(interfaceName)
 
