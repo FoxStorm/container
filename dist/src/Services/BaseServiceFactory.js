@@ -10,8 +10,8 @@ class BaseServiceFactory {
         try {
             return this.closure(container);
         }
-        catch (_a) {
-            throw new Error();
+        catch (error) {
+            throw error;
         }
     }
 }
